@@ -1,84 +1,29 @@
-
-import { nanoid } from 'nanoid';
 import Form from './Form/Form';
 import Contacts from './Contacts/Contacts';
 import Filter from './Filter/Filter';
-import { useEffect, useState } from 'react';
+import { getContacts } from './redux/selectors';
+import { useSelector } from 'react-redux';
 
-const contactsArray = [
-  { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-  { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-  { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-  { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-];
 
- const App = () =>{
-  const [contacts, setContacts] = useState(() => {
-    return JSON.parse(window.localStorage.getItem('contacts')) ?? contactsArray;
-  });
+const App = () => {
 
-  const [filter, setFilter] = useState('');
+const contacts = useSelector(getContacts);
 
-  useEffect(() => {
-    window.localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
-
-  const addContact = contact => {
-    const isInContacts = contacts.some(
-      ({ name }) =>
-        name.toLowerCase().trim() === contact.name.toLowerCase().trim()
-    );
-
-    if (isInContacts) {
-      alert(`${contact.name} is already in contacts`);
-      return;
-    }
-
-    setContacts(prevContacts => [
-      ...prevContacts,
-      { id: nanoid(), ...contact },
-    ]);
-  };
-
-  const changeFilter = event => {
-    setFilter(event.target.value.trim());
-  };
-
-  const getVisibleContacts = () => {
-    const normalizedFilter = filter.toLowerCase();
-
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedFilter)
-    );
-  };
-
-  const removeContact = (contactId) => {
-    setContacts(prevContacts =>
-      prevContacts.filter(contact => contact.id !== contactId),
-      alert(`Ok! Contact has been deleted successfully`)
-    );
-  };
-
-  const visibleContacts = getVisibleContacts();
-
-  return (
-    <div className="App">
-      <h1>Phonebook</h1>
-      <Form onSubmit={addContact} />
-      <h1>Contacts</h1>
-      {contacts.length > 0 ? (
-        <Filter value={filter} onChangeFilter={changeFilter} />
-      ) : (
-        <h3>There is no contacts!<br/> Add contacts through form above.</h3>
-      )}
-      {contacts.length > 0 && (
-        <Contacts
-          contacts={visibleContacts}
-          onRemoveContact={removeContact}
-        />
-      )}
-    </div>
-  );
+return (
+  <div>
+    <h1>Phonebook</h1>
+    <Form/>
+    <h1>Contacts</h1>
+    {contacts.length > 0 ? (
+      <Filter/>
+    ) : (
+      <h3>There is no contacts!<br/> Add contacts through form above.</h3>
+    )}
+    {contacts.length > 0 && (
+      <Contacts/>
+    )}
+  </div>
+);
 };
 
 export default App;

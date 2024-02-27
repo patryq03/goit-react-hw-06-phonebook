@@ -1,7 +1,13 @@
-import React  from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { getVisibleContacts } from '../redux/selectors';
+import { removeContact } from '../redux/contactSlice';
 
-const Contacts = ({ contacts, onRemoveContact }) => {
+const Contacts = () => {
+  
+  const contacts = useSelector(getVisibleContacts);
+  const dispatch = useDispatch();
+  const handleDelete = () => dispatch(removeContact());
 
   return(
     <ul>
@@ -12,7 +18,7 @@ const Contacts = ({ contacts, onRemoveContact }) => {
             <button
               type="button"
               name="delete"
-              onClick={() => onRemoveContact(contact.id)}>
+              onClick={handleDelete}>
               Delete
             </button>
           }
@@ -20,10 +26,5 @@ const Contacts = ({ contacts, onRemoveContact }) => {
       ))}
     </ul>)
     };
-
-Contacts.propTypes = {
-  contacts: PropTypes.array.isRequired,
-  onRemoveContact: PropTypes.func.isRequired,
-};
 
 export default Contacts;
